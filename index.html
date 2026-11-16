@@ -65,7 +65,7 @@
         max(1rem, env(safe-area-inset-left));
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      touch-action: pan-x pan-y;
+      touch-action: none;
       cursor: grab;
       scroll-behavior: auto;
     }
@@ -75,6 +75,13 @@
       scroll-behavior: auto;
       user-select: none;
       -webkit-user-select: none;
+    }
+
+    .tree-zoom {
+      display: inline-block;
+      width: max-content;
+      min-width: 100%;
+      transform-origin: 0 0;
     }
 
     .tree {
@@ -435,9 +442,11 @@
     <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
   </header>
   <p class="legend">When a filename describes a pair (e.g. “and”, comma), that couple uses one shared photo. Otherwise each person gets their own file, or a silhouette if none matches.</p>
-  <p class="scroll-hint">Drag sideways to explore. Press and hold a photo to preview (like hover on desktop).</p>
+  <p class="scroll-hint">Drag to pan · pinch to zoom · double-tap tree to reset zoom · hold a photo to preview.</p>
   <div class="tree-wrap" id="tree-scroll">
-    <div class="tree" id="tree-root"></div>
+    <div class="tree-zoom" id="tree-zoom">
+      <div class="tree" id="tree-root"></div>
+    </div>
   </div>
 
   <div id="image-preview-layer" aria-hidden="true">
@@ -450,6 +459,9 @@
 
   <script>
     let treePanDidDrag = false;
+    let treeScale = 1;
+    const TREE_SCALE_MIN = 0.45;
+    const TREE_SCALE_MAX = 3;
 
     let IMAGE_DIR = "images";
     let IMAGE_FILES = [];
@@ -749,22 +761,52 @@
       }
     });
 
-    function setupTreeHorizontalPan() {
+    function touchPairDistance(touches) {
+      if (touches.length < 2) return 0;
+      const dx = touches[1].clientX - touches[0].clientX;
+      const dy = touches[1].clientY - touches[0].clientY;
+      return Math.hypot(dx, dy);
+    }
+
+    function applyTreeScale() {
+      const zoom = document.getElementById("tree-zoom");
+      if (!zoom) return;
+      const supportsZoom =
+        "zoom" in zoom.style ||
+        (typeof CSS !== "undefined" && CSS.supports("zoom", "1.1"));
+      if (supportsZoom) {
+        zoom.style.zoom = String(treeScale);
+        zoom.style.transform = "";
+      } else {
+        zoom.style.zoom = "";
+        zoom.style.transform = `scale(${treeScale})`;
+        zoom.style.transformOrigin = "0 0";
+      }
+    }
+
+    function setupTreeGestures() {
       const wrap = document.getElementById("tree-scroll");
       if (!wrap) return;
 
-      let active = false;
+      let panActive = false;
       let startX = 0;
       let startY = 0;
       let scrollLeft = 0;
       let scrollTop = 0;
       const dragThreshold = 6;
 
+      let pinchActive = false;
+      let pinchStartDist = 0;
+      let pinchStartScale = 1;
+
+      let lastTapAt = 0;
+
       const onPointerDown = (e) => {
+        if (pinchActive) return;
         if (e.button !== undefined && e.button !== 0) return;
         if (e.target.closest("#image-preview-layer.is-open")) return;
         if (e.target.closest(".photo-frame:not(.placeholder)")) return;
-        active = true;
+        panActive = true;
         treePanDidDrag = false;
         wrap.classList.add("is-dragging");
         startX = e.clientX;
@@ -779,7 +821,7 @@
       };
 
       const onPointerMove = (e) => {
-        if (!active) return;
+        if (pinchActive || !panActive) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
         if (!treePanDidDrag && Math.hypot(dx, dy) < dragThreshold) return;
@@ -788,14 +830,12 @@
         wrap.scrollLeft = scrollLeft - dx;
         wrap.scrollTop = scrollTop - dy;
 
-        if (Math.abs(dx) > Math.abs(dy) && e.cancelable) {
-          e.preventDefault();
-        }
+        if (e.cancelable) e.preventDefault();
       };
 
       const endPan = (e) => {
-        if (!active) return;
-        active = false;
+        if (!panActive) return;
+        panActive = false;
         wrap.classList.remove("is-dragging");
         if (wrap.releasePointerCapture && e.pointerId !== undefined) {
           try {
@@ -814,6 +854,63 @@
       wrap.addEventListener("pointerup", endPan);
       wrap.addEventListener("pointercancel", endPan);
       wrap.addEventListener("lostpointercapture", endPan);
+
+      wrap.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length === 2) {
+            pinchActive = true;
+            panActive = false;
+            wrap.classList.remove("is-dragging");
+            pinchStartDist = touchPairDistance(e.touches);
+            pinchStartScale = treeScale;
+          }
+        },
+        { passive: true }
+      );
+
+      wrap.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!pinchActive || e.touches.length !== 2) return;
+          if (e.cancelable) e.preventDefault();
+          const dist = touchPairDistance(e.touches);
+          if (pinchStartDist <= 0) return;
+          const next = pinchStartScale * (dist / pinchStartDist);
+          treeScale = Math.min(
+            TREE_SCALE_MAX,
+            Math.max(TREE_SCALE_MIN, next)
+          );
+          applyTreeScale();
+        },
+        { passive: false }
+      );
+
+      wrap.addEventListener(
+        "touchend",
+        (e) => {
+          if (e.touches.length < 2) {
+            pinchActive = false;
+            pinchStartDist = 0;
+          }
+          if (e.touches.length > 0) return;
+          if (e.target.closest(".photo-frame:not(.placeholder)")) return;
+          const now = Date.now();
+          if (now - lastTapAt < 360) {
+            treeScale = 1;
+            applyTreeScale();
+            lastTapAt = 0;
+          } else {
+            lastTapAt = now;
+          }
+        },
+        { passive: true }
+      );
+
+      wrap.addEventListener("touchcancel", () => {
+        pinchActive = false;
+        pinchStartDist = 0;
+      });
     }
 
     function attachPhotoHover(frame, fullSrc, alt) {
@@ -997,7 +1094,8 @@
       EXPLICIT_IMAGE = data.images.explicit;
       family = data.tree;
       render();
-      setupTreeHorizontalPan();
+      setupTreeGestures();
+      applyTreeScale();
       const wrap = document.getElementById("tree-scroll");
       if (wrap) {
         const ul = wrap.querySelector(".tree > ul");
