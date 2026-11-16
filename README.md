@@ -1,5 +1,9 @@
 # Family tree site
 
+**Live site:** https://ritikdave-9.github.io/dwivedi-dave-family-tree/
+
+**Repository:** https://github.com/ritikdave-9/dwivedi-dave-family-tree
+
 Self-contained folder: data, page, and photos only.
 
 ## Contents
