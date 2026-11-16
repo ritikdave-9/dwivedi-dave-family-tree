@@ -3,17 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#f4efe6" />
+  <meta name="theme-color" content="#0a1628" />
   <title>Dwivedi–Dave Family Tree</title>
   <style>
     :root {
-      --bg: #f4efe6;
-      --card: #fffdf9;
-      --ink: #2c2419;
-      --muted: #6b5d4f;
-      --line: #c4a882;
-      --accent: #8b5e3c;
-      --shadow: 0 8px 24px rgba(44, 36, 25, 0.12);
+      --bg-deep: #06101f;
+      --bg-mid: #0f2544;
+      --glass: rgba(22, 58, 105, 0.42);
+      --glass-strong: rgba(30, 72, 130, 0.55);
+      --glass-border: rgba(140, 190, 255, 0.28);
+      --gold: #d4af37;
+      --gold-light: #f0d77a;
+      --gold-dark: #a67c00;
+      --ink: #eef4ff;
+      --ink-on-glass: #f8fbff;
+      --muted: #9eb8dc;
+      --line: rgba(212, 175, 55, 0.75);
+      --accent: var(--gold);
+      --shadow: 0 10px 36px rgba(0, 12, 40, 0.45);
+      --glow-gold: 0 0 22px rgba(212, 175, 55, 0.22);
       --photo-size: clamp(64px, 16vw, 84px);
       --couple-gap: 6px;
       --node-max: 220px;
@@ -28,7 +36,9 @@
       margin: 0;
       min-height: 100vh;
       font-family: "Segoe UI", system-ui, sans-serif;
-      background: radial-gradient(ellipse at top, #faf6f0 0%, var(--bg) 55%);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(80, 140, 220, 0.35), transparent 55%),
+        linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #163a62 100%);
       color: var(--ink);
     }
 
@@ -41,7 +51,12 @@
       margin: 0 0 0.35rem;
       font-weight: 600;
       font-size: clamp(1.35rem, 3vw, 1.85rem);
-      letter-spacing: 0.02em;
+      letter-spacing: 0.03em;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 1px 8px rgba(212, 175, 55, 0.35));
     }
 
     header p {
@@ -167,19 +182,23 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      background: var(--card);
-      border: 1px solid rgba(196, 168, 130, 0.45);
-      border-radius: 12px;
+      color: var(--ink-on-glass);
+      background: var(--glass);
+      backdrop-filter: blur(14px) saturate(1.25);
+      -webkit-backdrop-filter: blur(14px) saturate(1.25);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
       padding: 12px 14px 10px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       max-width: var(--node-max);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
     @media (hover: hover) and (pointer: fine) {
       .node:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(44, 36, 25, 0.16);
+        border-color: rgba(212, 175, 55, 0.55);
+        box-shadow: var(--shadow), var(--glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.16);
       }
     }
 
@@ -197,8 +216,9 @@
       height: var(--photo-size);
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid #e8dcc8;
-      background: #e8e0d4;
+      border: 3px solid var(--gold);
+      background: rgba(10, 30, 60, 0.65);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
       flex-shrink: 0;
       position: relative;
     }
@@ -271,10 +291,12 @@
       z-index: 2000;
       pointer-events: none;
       padding: 10px;
-      background: var(--card);
-      border: 1px solid rgba(196, 168, 130, 0.6);
+      background: var(--glass-strong);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.45);
       border-radius: 14px;
-      box-shadow: 0 20px 50px rgba(44, 36, 25, 0.28);
+      box-shadow: 0 20px 50px rgba(0, 8, 30, 0.55), var(--glow-gold);
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.12s ease, visibility 0.12s ease;
@@ -302,7 +324,7 @@
       font-size: 0.78rem;
       font-weight: 600;
       text-align: center;
-      color: var(--ink);
+      color: var(--gold-light);
     }
 
     #image-preview-layer {
@@ -397,7 +419,7 @@
         display: block;
         position: absolute;
         inset: 0;
-        background: rgba(44, 36, 25, 0.62);
+        background: rgba(4, 12, 28, 0.72);
       }
 
       #image-preview-layer.is-open #image-hover-preview {
