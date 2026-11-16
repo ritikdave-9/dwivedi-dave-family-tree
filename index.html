@@ -113,7 +113,7 @@
       display: flex;
       justify-content: center;
       flex-wrap: nowrap;
-      gap: 8px;
+      gap: 0;
       list-style: none;
       margin: 0;
       padding-left: 0;
@@ -133,14 +133,14 @@
       position: absolute;
       top: 0;
       right: 50%;
-      width: 50%;
+      width: calc(50% + 1px);
       height: 24px;
       border-top: 2px solid var(--line);
     }
 
     .tree li::after {
       right: auto;
-      left: 50%;
+      left: calc(50% - 1px);
       border-left: 2px solid var(--line);
     }
 
@@ -153,9 +153,12 @@
       padding-top: 0;
     }
 
-    .tree li:first-child::before,
-    .tree li:last-child::after {
+    .tree li:first-child::before {
       border: none;
+    }
+
+    .tree li:last-child::after {
+      border-top: none;
     }
 
     .tree ul ul::before {
@@ -357,7 +360,7 @@
       }
 
       .tree ul {
-        gap: 4px;
+        gap: 0;
         padding-top: 18px;
       }
 
