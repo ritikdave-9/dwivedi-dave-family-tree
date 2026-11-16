@@ -65,7 +65,7 @@
         max(1rem, env(safe-area-inset-left));
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
-      touch-action: none;
+      touch-action: pan-x pan-y pinch-zoom;
       cursor: grab;
       scroll-behavior: auto;
     }
@@ -325,6 +325,13 @@
         --node-max: min(188px, 44vw);
         --tree-li-pad-x: 6px;
         --couple-gap: 4px;
+      }
+
+      .tree-wrap {
+        max-height: calc(100dvh - 10.5rem);
+        min-height: 42vh;
+        touch-action: pan-x pan-y pinch-zoom;
+        overscroll-behavior: contain;
       }
 
       .tree ul {
@@ -830,7 +837,6 @@
         wrap.scrollLeft = scrollLeft - dx;
         wrap.scrollTop = scrollTop - dy;
 
-        if (e.cancelable) e.preventDefault();
       };
 
       const endPan = (e) => {
@@ -849,11 +855,13 @@
         }
       };
 
-      wrap.addEventListener("pointerdown", onPointerDown);
-      wrap.addEventListener("pointermove", onPointerMove);
-      wrap.addEventListener("pointerup", endPan);
-      wrap.addEventListener("pointercancel", endPan);
-      wrap.addEventListener("lostpointercapture", endPan);
+      if (!usesTouchPreview()) {
+        wrap.addEventListener("pointerdown", onPointerDown);
+        wrap.addEventListener("pointermove", onPointerMove);
+        wrap.addEventListener("pointerup", endPan);
+        wrap.addEventListener("pointercancel", endPan);
+        wrap.addEventListener("lostpointercapture", endPan);
+      }
 
       wrap.addEventListener(
         "touchstart",
