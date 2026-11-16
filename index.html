@@ -60,19 +60,29 @@
 
     .tree-wrap {
       overflow-x: auto;
-      overflow-y: hidden;
+      overflow-y: auto;
       padding: 1rem max(1rem, env(safe-area-inset-right)) 3rem
         max(1rem, env(safe-area-inset-left));
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
+      overscroll-behavior: contain;
       touch-action: pan-x pan-y;
+      cursor: grab;
+      scroll-behavior: auto;
+    }
+
+    .tree-wrap.is-dragging {
+      cursor: grabbing;
+      scroll-behavior: auto;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .tree {
       display: inline-flex;
       justify-content: center;
-      min-width: min(100%, max-content);
-      width: 100%;
+      width: max-content;
+      min-width: 100%;
+      max-width: none;
     }
 
     .tree ul {
@@ -406,8 +416,8 @@
     <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
   </header>
   <p class="legend">When a filename describes a pair (e.g. “and”, comma), that couple uses one shared photo. Otherwise each person gets their own file, or a silhouette if none matches.</p>
-  <p class="scroll-hint">Swipe sideways to explore the tree. Tap a photo to see it full size.</p>
-  <div class="tree-wrap">
+  <p class="scroll-hint">Drag or swipe sideways on the tree to explore. Tap a photo to see it full size.</p>
+  <div class="tree-wrap" id="tree-scroll">
     <div class="tree" id="tree-root"></div>
   </div>
 
@@ -420,6 +430,8 @@
   </div>
 
   <script>
+    let treePanDidDrag = false;
+
     let IMAGE_DIR = "images";
     let IMAGE_FILES = [];
     let EXPLICIT_IMAGE = {};
@@ -707,9 +719,76 @@
       }
     });
 
+    function setupTreeHorizontalPan() {
+      const wrap = document.getElementById("tree-scroll");
+      if (!wrap) return;
+
+      let active = false;
+      let startX = 0;
+      let startY = 0;
+      let scrollLeft = 0;
+      let scrollTop = 0;
+      const dragThreshold = 6;
+
+      const onPointerDown = (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        if (e.target.closest("#image-preview-layer.is-open")) return;
+        active = true;
+        treePanDidDrag = false;
+        wrap.classList.add("is-dragging");
+        startX = e.clientX;
+        startY = e.clientY;
+        scrollLeft = wrap.scrollLeft;
+        scrollTop = wrap.scrollTop;
+        if (wrap.setPointerCapture && e.pointerId !== undefined) {
+          try {
+            wrap.setPointerCapture(e.pointerId);
+          } catch (_) {}
+        }
+      };
+
+      const onPointerMove = (e) => {
+        if (!active) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (!treePanDidDrag && Math.hypot(dx, dy) < dragThreshold) return;
+
+        treePanDidDrag = true;
+        wrap.scrollLeft = scrollLeft - dx;
+        wrap.scrollTop = scrollTop - dy;
+
+        if (Math.abs(dx) > Math.abs(dy) && e.cancelable) {
+          e.preventDefault();
+        }
+      };
+
+      const endPan = (e) => {
+        if (!active) return;
+        active = false;
+        wrap.classList.remove("is-dragging");
+        if (wrap.releasePointerCapture && e.pointerId !== undefined) {
+          try {
+            wrap.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+        }
+        if (treePanDidDrag) {
+          window.setTimeout(() => {
+            treePanDidDrag = false;
+          }, 120);
+        }
+      };
+
+      wrap.addEventListener("pointerdown", onPointerDown);
+      wrap.addEventListener("pointermove", onPointerMove);
+      wrap.addEventListener("pointerup", endPan);
+      wrap.addEventListener("pointercancel", endPan);
+      wrap.addEventListener("lostpointercapture", endPan);
+    }
+
     function attachPhotoHover(frame, fullSrc, alt) {
       frame.addEventListener("click", (e) => {
         if (!usesTouchPreview()) return;
+        if (treePanDidDrag) return;
         e.stopPropagation();
         if (
           activePreviewFrame === frame &&
@@ -844,6 +923,14 @@
       EXPLICIT_IMAGE = data.images.explicit;
       family = data.tree;
       render();
+      setupTreeHorizontalPan();
+      const wrap = document.getElementById("tree-scroll");
+      if (wrap) {
+        const ul = wrap.querySelector(".tree > ul");
+        if (ul && ul.scrollWidth > wrap.clientWidth) {
+          wrap.scrollLeft = (ul.scrollWidth - wrap.clientWidth) / 2;
+        }
+      }
     }
 
     init().catch((err) => {
