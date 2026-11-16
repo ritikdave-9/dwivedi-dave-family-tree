@@ -76,10 +76,12 @@
     .tree-wrap {
       overflow-x: auto;
       overflow-y: auto;
+      max-height: calc(100dvh - 9.25rem);
       padding: 1rem max(1rem, env(safe-area-inset-right)) 3rem
         max(1rem, env(safe-area-inset-left));
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+      overscroll-behavior-x: contain;
+      overscroll-behavior-y: auto;
       touch-action: pan-x pan-y pinch-zoom;
       cursor: grab;
       scroll-behavior: auto;
@@ -276,15 +278,6 @@
       margin-top: 2px;
     }
 
-    .legend {
-      max-width: 640px;
-      margin: 0 auto 1rem;
-      padding: 0 1rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-align: center;
-    }
-
     .photo-frame:not(.placeholder) {
       cursor: zoom-in;
     }
@@ -356,7 +349,8 @@
         max-height: calc(100dvh - 10.5rem);
         min-height: 42vh;
         touch-action: pan-x pan-y pinch-zoom;
-        overscroll-behavior: contain;
+        overscroll-behavior-x: contain;
+        overscroll-behavior-y: auto;
       }
 
       .tree ul {
@@ -473,7 +467,6 @@
     <h1 id="page-title">Dwivedi–Dave Family Tree</h1>
     <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
   </header>
-  <p class="legend">When a filename describes a pair (e.g. “and”, comma), that couple uses one shared photo. Otherwise each person gets their own file, or a silhouette if none matches.</p>
   <p class="scroll-hint">Drag to pan · pinch to zoom · double-tap tree to reset zoom · hold a photo to preview.</p>
   <div class="tree-wrap" id="tree-scroll">
     <div class="tree-zoom" id="tree-zoom">
