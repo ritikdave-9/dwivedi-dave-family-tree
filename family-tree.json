@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "title": "Dwivedi–Dave Family Tree",
+    "subtitle": "From Maha Pandit Raghunath Ji",
+    "honorificMaxDepth": 3,
+    "imageNaming": "Solo: given-name (kebab-case). Pair: pair-name-and-name. Group: group-....",
+    "treeArtPrompt": "TREE-IMAGE-GENERATION-PROMPT.md",
+    "referenceArt": "reference/tree-of-life-reference.jpeg"
+  },
+  "images": {
+    "directory": "images",
+    "files": [
+      "maha-pandit-raghunath-ji.jpeg",
+      "devki-vallabh.jpeg",
+      "mani-devi.jpeg",
+      "shanti-vallabh.jpg",
+      "shashikala.jpg",
+      "jitendra-dave.jpeg",
+      "jaya-dave.jpeg",
+      "harshita-dave.jpeg",
+      "ritik-dave.jpeg",
+      "sunita-dwivedi.jpeg",
+      "gunwanth-dwivedi.jpeg",
+      "pulkit-dwivedi.jpeg",
+      "samriddhi.jpg",
+      "piyul-dwivedi.jpg",
+      "pair-anand-vallabh-and-nandini.jpeg",
+      "pair-jayesh-and-mini.jpeg",
+      "group-jayesh-mini-naisha.jpeg",
+      "naisha.jpeg",
+      "pair-abhishek-and-rachna.jpeg",
+      "aryan.jpeg",
+      "indra-vallabh.jpeg",
+      "maya-devi.jpeg",
+      "surabhi.jpeg",
+      "hridesh-vyas.jpeg",
+      "javesh.jpeg",
+      "parul.jpeg",
+      "narendra-sharma.jpeg",
+      "bhav-sharma.jpeg",
+      "avishi.jpeg",
+      "neha.jpeg",
+      "trisha.jpeg"
+    ],
+    "registry": {
+      "maha-pandit-raghunath-ji.jpeg": {
+        "type": "solo",
+        "people": ["Maha Pandit Raghunath Ji"]
+      },
+      "devki-vallabh.jpeg": { "type": "solo", "people": ["Devki Vallabh"] },
+      "mani-devi.jpeg": { "type": "solo", "people": ["Mani Devi"] },
+      "shanti-vallabh.jpg": { "type": "solo", "people": ["Shanti Vallabh"] },
+      "shashikala.jpg": { "type": "solo", "people": ["Shashikala"] },
+      "jitendra-dave.jpeg": { "type": "solo", "people": ["Jitendra"] },
+      "jaya-dave.jpeg": { "type": "solo", "people": ["Jaya"] },
+      "harshita-dave.jpeg": { "type": "solo", "people": ["Harshita"] },
+      "ritik-dave.jpeg": { "type": "solo", "people": ["Ritik"] },
+      "sunita-dwivedi.jpeg": { "type": "solo", "people": ["Sunita"] },
+      "gunwanth-dwivedi.jpeg": { "type": "solo", "people": ["Gunwanth"] },
+      "pulkit-dwivedi.jpeg": { "type": "solo", "people": ["Pulkit"] },
+      "samriddhi.jpg": { "type": "solo", "people": ["Samriddhi"] },
+      "piyul-dwivedi.jpg": { "type": "solo", "people": ["Piyul"] },
+      "pair-anand-vallabh-and-nandini.jpeg": {
+        "type": "pair",
+        "people": ["Anand Vallabh", "Nandini"]
+      },
+      "pair-jayesh-and-mini.jpeg": { "type": "pair", "people": ["Jayesh", "Mini"] },
+      "group-jayesh-mini-naisha.jpeg": {
+        "type": "group",
+        "people": ["Jayesh", "Mini", "Naisha"]
+      },
+      "naisha.jpeg": { "type": "solo", "people": ["Naisha"] },
+      "pair-abhishek-and-rachna.jpeg": {
+        "type": "pair",
+        "people": ["Abhishek", "Rachna"]
+      },
+      "aryan.jpeg": { "type": "solo", "people": ["Aryan"] },
+      "indra-vallabh.jpeg": { "type": "solo", "people": ["Indra Vallabh"] },
+      "maya-devi.jpeg": { "type": "solo", "people": ["Maya Devi"] },
+      "surabhi.jpeg": { "type": "solo", "people": ["Surabhi"] },
+      "hridesh-vyas.jpeg": { "type": "solo", "people": ["Hridesh Vyas"] },
+      "javesh.jpeg": { "type": "solo", "people": ["Javesh"] },
+      "parul.jpeg": { "type": "solo", "people": ["Parul"] },
+      "narendra-sharma.jpeg": { "type": "solo", "people": ["Narendra Sharma"] },
+      "bhav-sharma.jpeg": { "type": "solo", "people": ["Bhav Sharma"] },
+      "avishi.jpeg": { "type": "solo", "people": ["Avishi"] },
+      "neha.jpeg": { "type": "solo", "people": ["Neha"] },
+      "trisha.jpeg": { "type": "solo", "people": ["Trisha"] }
+    },
+    "explicit": {
+      "maha pandit raghunath ji": "maha-pandit-raghunath-ji.jpeg",
+      "devki vallabh": "devki-vallabh.jpeg",
+      "mani devi": "mani-devi.jpeg",
+      "shanti vallabh": "shanti-vallabh.jpg",
+      "shashikala": "shashikala.jpg",
+      "jitendra": "jitendra-dave.jpeg",
+      "jaya": "jaya-dave.jpeg",
+      "harshita": "harshita-dave.jpeg",
+      "ritik": "ritik-dave.jpeg",
+      "sunita": "sunita-dwivedi.jpeg",
+      "gunwanth": "gunwanth-dwivedi.jpeg",
+      "pulkit": "pulkit-dwivedi.jpeg",
+      "samriddhi": "samriddhi.jpg",
+      "piyul": "piyul-dwivedi.jpg",
+      "naisha": "naisha.jpeg",
+      "aryan": "aryan.jpeg",
+      "indra vallabh": "indra-vallabh.jpeg",
+      "maya devi": "maya-devi.jpeg",
+      "surabhi": "surabhi.jpeg",
+      "hridesh vyas": "hridesh-vyas.jpeg",
+      "javesh": "javesh.jpeg",
+      "parul": "parul.jpeg",
+      "narendra sharma": "narendra-sharma.jpeg",
+      "bhav sharma": "bhav-sharma.jpeg",
+      "avishi": "avishi.jpeg",
+      "neha": "neha.jpeg",
+      "trisha": "trisha.jpeg"
+    }
+  },
+  "tree": {
+    "name": "Maha Pandit Raghunath Ji",
+    "children": [
+      {
+        "name": "Shri Vallabh Ji",
+        "children": [
+          {
+            "name": "Devki Vallabh",
+            "spouse": "Mani Devi",
+            "children": [
+              {
+                "name": "Shanti Vallabh",
+                "spouse": "Shashikala",
+                "children": [
+                  {
+                    "name": "Jitendra",
+                    "spouse": "Jaya",
+                    "children": [
+                      { "name": "Harshita" },
+                      { "name": "Ritik" }
+                    ]
+                  },
+                  {
+                    "name": "Sunita",
+                    "spouse": "Gunwanth",
+                    "children": [
+                      { "name": "Pulkit", "spouse": "Samriddhi" },
+                      { "name": "Piyul" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Anand Vallabh",
+                "spouse": "Nandini",
+                "children": [
+                  {
+                    "name": "Jayesh",
+                    "spouse": "Mini",
+                    "children": [{ "name": "Naisha" }]
+                  },
+                  {
+                    "name": "Abhishek",
+                    "spouse": "Rachna",
+                    "children": [{ "name": "Aryan" }]
+                  }
+                ]
+              },
+              {
+                "name": "Indra Vallabh",
+                "spouse": "Maya Devi",
+                "children": [
+                  {
+                    "name": "Surabhi",
+                    "spouse": "Hridesh Vyas",
+                    "children": [{ "name": "Javesh" }]
+                  },
+                  {
+                    "name": "Parul",
+                    "spouse": "Narendra Sharma",
+                    "children": [
+                      { "name": "Bhav Sharma" },
+                      { "name": "Avishi" }
+                    ]
+                  },
+                  {
+                    "name": "Neha",
+                    "spouse": "Vinod Sharma",
+                    "children": [{ "name": "Trisha" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

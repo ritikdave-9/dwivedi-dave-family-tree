@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4efe6" />
+  <title>Dwivedi–Dave Family Tree</title>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --card: #fffdf9;
+      --ink: #2c2419;
+      --muted: #6b5d4f;
+      --line: #c4a882;
+      --accent: #8b5e3c;
+      --shadow: 0 8px 24px rgba(44, 36, 25, 0.12);
+      --photo-size: clamp(64px, 16vw, 84px);
+      --couple-gap: 6px;
+      --node-max: 220px;
+      --tree-li-pad-x: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(ellipse at top, #faf6f0 0%, var(--bg) 55%);
+      color: var(--ink);
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.35rem;
+      font-weight: 600;
+      font-size: clamp(1.35rem, 3vw, 1.85rem);
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .scroll-hint {
+      display: none;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 0 1rem 0.35rem;
+    }
+
+    .tree-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 1rem max(1rem, env(safe-area-inset-right)) 3rem
+        max(1rem, env(safe-area-inset-left));
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x pan-y;
+    }
+
+    .tree {
+      display: inline-flex;
+      justify-content: center;
+      min-width: min(100%, max-content);
+      width: 100%;
+    }
+
+    .tree ul {
+      padding-top: 24px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-wrap: nowrap;
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding-left: 0;
+    }
+
+    .tree li {
+      text-align: center;
+      list-style-type: none;
+      position: relative;
+      padding: 24px var(--tree-li-pad-x) 0;
+      flex: 0 0 auto;
+    }
+
+    .tree li::before,
+    .tree li::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 50%;
+      width: 50%;
+      height: 24px;
+      border-top: 2px solid var(--line);
+    }
+
+    .tree li::after {
+      right: auto;
+      left: 50%;
+      border-left: 2px solid var(--line);
+    }
+
+    .tree li:only-child::after,
+    .tree li:only-child::before {
+      display: none;
+    }
+
+    .tree li:only-child {
+      padding-top: 0;
+    }
+
+    .tree li:first-child::before,
+    .tree li:last-child::after {
+      border: none;
+    }
+
+    .tree ul ul::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 0;
+      height: 24px;
+      border-left: 2px solid var(--line);
+    }
+
+    .tree > ul > li {
+      padding-top: 0;
+    }
+
+    .tree > ul > li::before,
+    .tree > ul > li::after {
+      display: none;
+    }
+
+    .node {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid rgba(196, 168, 130, 0.45);
+      border-radius: 12px;
+      padding: 12px 14px 10px;
+      box-shadow: var(--shadow);
+      max-width: var(--node-max);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(44, 36, 25, 0.16);
+      }
+    }
+
+    .photos {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: var(--couple-gap);
+    }
+
+    .photo-frame {
+      width: var(--photo-size);
+      height: var(--photo-size);
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #e8dcc8;
+      background: #e8e0d4;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .photo-frame.group {
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+      overflow: hidden;
+      line-height: 0;
+    }
+
+    .photo-frame .photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 22%;
+      transform: scale(1.15);
+      transform-origin: center 28%;
+    }
+
+    .photo-frame.group .photo {
+      width: auto;
+      height: auto;
+      max-width: 196px;
+      max-height: calc(var(--photo-size) * 1.65);
+      object-fit: contain;
+      object-position: center;
+      transform: none;
+    }
+
+    .photo-frame.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+
+    .label {
+      font-size: 0.8rem;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .label .sub {
+      display: block;
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-top: 2px;
+    }
+
+    .legend {
+      max-width: 640px;
+      margin: 0 auto 1rem;
+      padding: 0 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .photo-frame:not(.placeholder) {
+      cursor: zoom-in;
+    }
+
+    #image-hover-preview {
+      position: fixed;
+      z-index: 2000;
+      pointer-events: none;
+      padding: 10px;
+      background: var(--card);
+      border: 1px solid rgba(196, 168, 130, 0.6);
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(44, 36, 25, 0.28);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+      max-width: min(480px, 92vw);
+      max-height: min(640px, 88vh);
+    }
+
+    #image-hover-preview.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #image-hover-preview img {
+      display: block;
+      max-width: min(460px, 90vw);
+      max-height: min(620px, 86vh);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    #image-hover-preview .preview-caption {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    #image-preview-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    #image-preview-layer .preview-backdrop {
+      display: none;
+    }
+
+    body.preview-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --node-max: min(188px, 44vw);
+        --tree-li-pad-x: 6px;
+        --couple-gap: 4px;
+      }
+
+      .tree ul {
+        gap: 4px;
+        padding-top: 18px;
+      }
+
+      .tree li {
+        padding-top: 18px;
+      }
+
+      .tree li::before,
+      .tree li::after {
+        height: 18px;
+      }
+
+      .tree ul ul::before {
+        height: 18px;
+      }
+
+      .scroll-hint {
+        display: block;
+      }
+
+      .legend {
+        font-size: 0.72rem;
+        padding: 0 0.65rem;
+      }
+
+      .photo-frame.group .photo {
+        max-width: min(168px, 40vw);
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 1rem 0.65rem 0.65rem;
+      }
+
+      .node {
+        padding: 8px 8px 6px;
+        border-radius: 10px;
+      }
+
+      .label .sub {
+        font-size: 0.68rem;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      #image-preview-layer.is-open {
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: max(12px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(12px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+      }
+
+      #image-preview-layer.is-open .preview-backdrop {
+        display: block;
+        position: absolute;
+        inset: 0;
+        background: rgba(44, 36, 25, 0.62);
+      }
+
+      #image-preview-layer.is-open #image-hover-preview {
+        position: relative;
+        left: auto !important;
+        top: auto !important;
+        pointer-events: auto;
+        max-width: min(480px, 94vw);
+        max-height: min(85vh, 720px);
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #image-preview-layer.is-open #image-hover-preview img {
+        max-width: 100%;
+        max-height: min(72vh, 560px);
+      }
+
+      .photo-frame:not(.placeholder) {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="page-title">Dwivedi–Dave Family Tree</h1>
+    <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
+  </header>
+  <p class="legend">When a filename describes a pair (e.g. “and”, comma), that couple uses one shared photo. Otherwise each person gets their own file, or a silhouette if none matches.</p>
+  <p class="scroll-hint">Swipe sideways to explore the tree. Tap a photo to see it full size.</p>
+  <div class="tree-wrap">
+    <div class="tree" id="tree-root"></div>
+  </div>
+
+  <div id="image-preview-layer" aria-hidden="true">
+    <div class="preview-backdrop" aria-hidden="true"></div>
+    <div id="image-hover-preview">
+      <img src="" alt="" />
+      <div class="preview-caption"></div>
+    </div>
+  </div>
+
+  <script>
+    let IMAGE_DIR = "images";
+    let IMAGE_FILES = [];
+    let EXPLICIT_IMAGE = {};
+    let family = null;
+    let HONORIFIC_MAX_DEPTH = 3;
+
+    function normalize(s) {
+      return (s || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function tokens(s) {
+      return normalize(s).split(" ").filter(Boolean);
+    }
+
+    function imageUrl(filename) {
+      return encodeURI(`${IMAGE_DIR}/${filename}`);
+    }
+
+    function basename(file) {
+      return normalize(file.replace(/\.(jpe?g|png|webp)$/i, ""));
+    }
+
+    function isPairFilename(file) {
+      if (/^pair-/i.test(file)) return true;
+      if (/^group-/i.test(file)) return true;
+      const raw = file.replace(/\.(jpe?g|png|webp)$/i, "");
+      if (/\band\b/i.test(raw)) return true;
+      if (/,/.test(raw)) return true;
+      if (/\s&\s/.test(raw)) return true;
+      if (/\s+and\s+/i.test(raw)) return true;
+      if (/\(pair\)/i.test(raw)) return true;
+      return false;
+    }
+
+    function personMatchesFile(personName, file) {
+      const base = basename(file);
+      const person = normalize(personName);
+      const personToks = tokens(personName).filter((t) => t.length >= 3);
+      if (base.includes(person)) return true;
+      if (person.includes("raghunath") && /raghu/.test(base)) return true;
+      if (person.includes("nandini") && /nandani/.test(base)) return true;
+      if (person.includes("naisha") && /nayasha/.test(base)) return true;
+      if (person.includes("samriddhi") && /samridhi/.test(base)) return true;
+      if (person.includes("gunwanth") && /gunvant/.test(base)) return true;
+      if (person.includes("shashikala") && /shashi/.test(base)) return true;
+      return personToks.some((t) => base.includes(t));
+    }
+
+    function fileMatchesAllPeople(file, names) {
+      return names.every((n) => personMatchesFile(n, file));
+    }
+
+    function scorePairFileForCouple(file, names) {
+      const base = basename(file);
+      let score = 100;
+      const coupleHit = names.every((n) => personMatchesFile(n, file));
+      if (!coupleHit) return -1;
+
+      const rosterHints = [
+        "nayasha",
+        "naisha",
+        "aryan",
+        "avishi",
+        "trisha",
+        "bhav",
+        "harshita",
+        "ritik",
+        "piyul",
+        "javesh",
+      ];
+      const coupleParts = names
+        .flatMap((n) => tokens(n))
+        .filter((t) => t.length >= 4);
+
+      for (const hint of rosterHints) {
+        if (!base.includes(hint)) continue;
+        const inCouple = coupleParts.some(
+          (t) => t.includes(hint) || hint.includes(t)
+        );
+        if (!inCouple) score -= 35;
+      }
+      score -= Math.max(0, (file.match(/,/g) || []).length - 1) * 8;
+      return score;
+    }
+
+    function scoreFileForPerson(file, personName) {
+      if (isPairFilename(file)) return 0;
+
+      const base = basename(file);
+      const person = normalize(personName);
+      const personToks = tokens(personName);
+      if (base === person) return 100;
+      if (base.includes(person) || person.includes(base)) return 80;
+      let hits = 0;
+      for (const t of personToks) {
+        if (t.length < 3) continue;
+        if (base.includes(t)) hits++;
+      }
+      if (hits >= 2) return 50 + hits * 10;
+      if (hits === 1 && personToks.length === 1) return 45;
+      if (person.includes("raghunath") && /raghu/.test(base)) return 70;
+      if (person.includes("nandini") && /nandani/.test(base)) return 65;
+      if (person.includes("naisha") && /nayasha/.test(base)) return 65;
+      if (person.includes("samriddhi") && /samridhi/.test(base)) return 65;
+      if (person.includes("gunwanth") && /gunvant/.test(base)) return 65;
+      if (person.includes("shashikala") && /shashi/.test(base)) return 55;
+      return 0;
+    }
+
+    const usedFiles = new Set();
+
+    function findPairImage(names) {
+      if (names.length < 2) return null;
+
+      let best = null;
+      let bestScore = -Infinity;
+      for (const file of IMAGE_FILES) {
+        if (usedFiles.has(file)) continue;
+        if (!isPairFilename(file)) continue;
+        if (!fileMatchesAllPeople(file, names)) continue;
+        const score = scorePairFileForCouple(file, names);
+        if (score > bestScore) {
+          bestScore = score;
+          best = file;
+        }
+      }
+      if (best && bestScore >= 0) {
+        usedFiles.add(best);
+        return best;
+      }
+      return null;
+    }
+
+    function findImageForPerson(name) {
+      const key = normalize(name);
+      const exact = EXPLICIT_IMAGE[key];
+      if (exact && !usedFiles.has(exact) && !isPairFilename(exact)) {
+        usedFiles.add(exact);
+        return { src: exact, group: false };
+      }
+
+      let best = null;
+      let bestScore = 0;
+      for (const file of IMAGE_FILES) {
+        if (usedFiles.has(file)) continue;
+        if (isPairFilename(file)) continue;
+        const s = scoreFileForPerson(file, name);
+        if (s > bestScore) {
+          bestScore = s;
+          best = file;
+        }
+      }
+      if (best && bestScore >= 40) {
+        usedFiles.add(best);
+        return { src: best, group: false };
+      }
+      return null;
+    }
+
+    function resolvePhotos(node) {
+      const people = [node.name];
+      if (node.spouse) people.push(node.spouse);
+
+      if (people.length > 1) {
+        const pair = findPairImage(people);
+        if (pair) {
+          return [{ src: pair, group: true, alt: people.join(" & ") }];
+        }
+      }
+
+      const photos = [];
+      for (const p of people) {
+        const img = findImageForPerson(p);
+        photos.push(
+          img
+            ? { ...img, alt: p }
+            : { placeholder: true, alt: p }
+        );
+      }
+      return photos;
+    }
+
+    function isFemaleName(name) {
+      const n = normalize(name);
+      if (/\bdevi\b/.test(n)) return true;
+      return new Set([
+        "shashikala",
+        "mani devi",
+        "nandini",
+        "maya devi",
+      ]).has(n);
+    }
+
+    function escapeHtml(s) {
+      return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function withHonorific(name, depth) {
+      if (depth > HONORIFIC_MAX_DEPTH) return escapeHtml(name);
+      if (/maha\s+pandit/i.test(name)) return escapeHtml(name);
+      if (/^shri(mati)?\s/i.test(name.trim())) return escapeHtml(name);
+      const prefix = isFemaleName(name) ? "Shrimati " : "Shri ";
+      return escapeHtml(prefix + name);
+    }
+
+    function displayName(node, depth) {
+      let text = withHonorific(node.name, depth);
+      if (node.spouse) {
+        text +=
+          ' <span class="sub">&amp; ' +
+          withHonorific(node.spouse, depth) +
+          "</span>";
+      }
+      return text;
+    }
+
+    const previewLayer = document.getElementById("image-preview-layer");
+    const previewBackdrop = previewLayer.querySelector(".preview-backdrop");
+    const hoverPreview = document.getElementById("image-hover-preview");
+    const hoverPreviewImg = hoverPreview.querySelector("img");
+    const hoverPreviewCaption = hoverPreview.querySelector(".preview-caption");
+    let activePreviewFrame = null;
+
+    function usesTouchPreview() {
+      return window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    }
+
+    function positionHoverPreview(clientX, clientY) {
+      if (usesTouchPreview()) return;
+      const pad = 18;
+      const rect = hoverPreview.getBoundingClientRect();
+      const w = rect.width || 320;
+      const h = rect.height || 400;
+      let left = clientX + pad;
+      let top = clientY + pad;
+      if (left + w > window.innerWidth - pad) {
+        left = clientX - w - pad;
+      }
+      if (top + h > window.innerHeight - pad) {
+        top = clientY - h - pad;
+      }
+      left = Math.max(pad, Math.min(left, window.innerWidth - w - pad));
+      top = Math.max(pad, Math.min(top, window.innerHeight - h - pad));
+      hoverPreview.style.left = `${left}px`;
+      hoverPreview.style.top = `${top}px`;
+    }
+
+    function showHoverPreview(fullSrc, alt, clientX, clientY) {
+      hoverPreviewImg.src = fullSrc;
+      hoverPreviewImg.alt = alt;
+      hoverPreviewCaption.textContent = alt;
+      hoverPreview.classList.add("is-visible");
+      previewLayer.classList.add("is-open");
+      previewLayer.setAttribute("aria-hidden", "false");
+
+      if (usesTouchPreview()) {
+        document.body.classList.add("preview-open");
+        hoverPreview.style.left = "";
+        hoverPreview.style.top = "";
+      } else {
+        requestAnimationFrame(() => positionHoverPreview(clientX, clientY));
+      }
+    }
+
+    function hideHoverPreview() {
+      hoverPreview.classList.remove("is-visible");
+      previewLayer.classList.remove("is-open");
+      previewLayer.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("preview-open");
+      activePreviewFrame = null;
+    }
+
+    previewBackdrop.addEventListener("click", hideHoverPreview);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && hoverPreview.classList.contains("is-visible")) {
+        hideHoverPreview();
+      }
+    });
+
+    function attachPhotoHover(frame, fullSrc, alt) {
+      frame.addEventListener("click", (e) => {
+        if (!usesTouchPreview()) return;
+        e.stopPropagation();
+        if (
+          activePreviewFrame === frame &&
+          hoverPreview.classList.contains("is-visible")
+        ) {
+          hideHoverPreview();
+          return;
+        }
+        activePreviewFrame = frame;
+        const rect = frame.getBoundingClientRect();
+        showHoverPreview(
+          fullSrc,
+          alt,
+          rect.left + rect.width / 2,
+          rect.top
+        );
+      });
+
+      frame.addEventListener("mouseenter", (e) => {
+        if (usesTouchPreview()) return;
+        activePreviewFrame = frame;
+        showHoverPreview(fullSrc, alt, e.clientX, e.clientY);
+      });
+      frame.addEventListener("mousemove", (e) => {
+        if (usesTouchPreview()) return;
+        if (hoverPreview.classList.contains("is-visible")) {
+          positionHoverPreview(e.clientX, e.clientY);
+        }
+      });
+      frame.addEventListener("mouseleave", () => {
+        if (usesTouchPreview()) return;
+        hideHoverPreview();
+      });
+    }
+
+    function tunePortraitCrop(img, isGroup) {
+      if (isGroup) return;
+
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      if (!w || !h) return;
+
+      const portrait = h > w * 1.05;
+      if (portrait) {
+        img.style.objectPosition = "center 18%";
+        img.style.transform = "scale(1.12)";
+        img.style.transformOrigin = "center 22%";
+      } else if (w > h * 1.1) {
+        img.style.objectPosition = "center 42%";
+        img.style.transform = "scale(1.2)";
+        img.style.transformOrigin = "center 40%";
+      } else {
+        img.style.objectPosition = "center 24%";
+        img.style.transform = "scale(1.15)";
+      }
+    }
+
+    function buildNode(node, depth = 0) {
+      const li = document.createElement("li");
+      const box = document.createElement("div");
+      box.className = "node";
+
+      const photosDiv = document.createElement("div");
+      photosDiv.className = "photos";
+      const photos = resolvePhotos(node);
+
+      for (const ph of photos) {
+        if (ph.placeholder) {
+          const frame = document.createElement("div");
+          frame.className = "photo-frame placeholder";
+          frame.title = ph.alt;
+          frame.textContent = "👤";
+          frame.setAttribute("aria-label", ph.alt);
+          photosDiv.appendChild(frame);
+        } else {
+          const frame = document.createElement("div");
+          frame.className = "photo-frame" + (ph.group ? " group" : "");
+          const img = document.createElement("img");
+          img.className = "photo";
+          img.src = imageUrl(ph.src);
+          img.alt = ph.alt;
+          img.loading = "lazy";
+          img.decoding = "async";
+          img.addEventListener("load", () => tunePortraitCrop(img, ph.group));
+          frame.appendChild(img);
+          attachPhotoHover(frame, imageUrl(ph.src), ph.alt);
+          photosDiv.appendChild(frame);
+        }
+      }
+
+      const label = document.createElement("div");
+      label.className = "label";
+      label.innerHTML = displayName(node, depth);
+
+      box.appendChild(photosDiv);
+      box.appendChild(label);
+      li.appendChild(box);
+
+      if (node.children && node.children.length) {
+        const ul = document.createElement("ul");
+        for (const child of node.children) {
+          ul.appendChild(buildNode(child, depth + 1));
+        }
+        li.appendChild(ul);
+      }
+
+      return li;
+    }
+
+    function render() {
+      if (!family) return;
+      usedFiles.clear();
+      const root = document.getElementById("tree-root");
+      root.replaceChildren();
+      const ul = document.createElement("ul");
+      ul.appendChild(buildNode(family));
+      root.appendChild(ul);
+    }
+
+    async function init() {
+      const res = await fetch("family-tree.json");
+      if (!res.ok) {
+        throw new Error("Could not load family-tree.json");
+      }
+      const data = await res.json();
+      document.getElementById("page-title").textContent = data.meta.title;
+      document.getElementById("page-subtitle").textContent = data.meta.subtitle;
+      document.title = data.meta.title;
+      HONORIFIC_MAX_DEPTH = data.meta.honorificMaxDepth ?? 3;
+      IMAGE_DIR = data.images.directory || "images";
+      IMAGE_FILES = data.images.files;
+      EXPLICIT_IMAGE = data.images.explicit;
+      family = data.tree;
+      render();
+    }
+
+    init().catch((err) => {
+      console.error(err);
+      document.getElementById("tree-root").textContent =
+        "Failed to load family-tree.json. Open this page via a local web server (not file://).";
+    });
+  </script>
+</body>
+</html>
