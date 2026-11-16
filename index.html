@@ -406,6 +406,25 @@
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
       }
+
+      /* Long-press peek: floating preview like desktop hover (not full lightbox). */
+      #image-preview-layer.is-touch-hold {
+        visibility: visible;
+        pointer-events: none;
+      }
+
+      #image-preview-layer.is-touch-hold #image-hover-preview {
+        position: fixed;
+        z-index: 2001;
+        pointer-events: none;
+        max-width: min(420px, 88vw);
+        max-height: min(560px, 70vh);
+      }
+
+      #image-preview-layer.is-touch-hold #image-hover-preview img {
+        max-width: min(400px, 86vw);
+        max-height: min(520px, 65vh);
+      }
     }
 
   </style>
@@ -416,7 +435,7 @@
     <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
   </header>
   <p class="legend">When a filename describes a pair (e.g. “and”, comma), that couple uses one shared photo. Otherwise each person gets their own file, or a silhouette if none matches.</p>
-  <p class="scroll-hint">Drag or swipe sideways on the tree to explore. Tap a photo to see it full size.</p>
+  <p class="scroll-hint">Drag sideways to explore. Press and hold a photo to preview (like hover on desktop).</p>
   <div class="tree-wrap" id="tree-scroll">
     <div class="tree" id="tree-root"></div>
   </div>
@@ -668,7 +687,8 @@
     }
 
     function positionHoverPreview(clientX, clientY) {
-      if (usesTouchPreview()) return;
+      const touchHold = previewLayer.classList.contains("is-touch-hold");
+      if (usesTouchPreview() && !touchHold) return;
       const pad = 18;
       const rect = hoverPreview.getBoundingClientRect();
       const w = rect.width || 320;
@@ -704,9 +724,19 @@
       }
     }
 
+    function showTouchHoldPreview(fullSrc, alt, clientX, clientY) {
+      hoverPreviewImg.src = fullSrc;
+      hoverPreviewImg.alt = alt;
+      hoverPreviewCaption.textContent = alt;
+      hoverPreview.classList.add("is-visible");
+      previewLayer.classList.add("is-touch-hold");
+      previewLayer.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => positionHoverPreview(clientX, clientY));
+    }
+
     function hideHoverPreview() {
       hoverPreview.classList.remove("is-visible");
-      previewLayer.classList.remove("is-open");
+      previewLayer.classList.remove("is-open", "is-touch-hold");
       previewLayer.setAttribute("aria-hidden", "true");
       document.body.classList.remove("preview-open");
       activePreviewFrame = null;
@@ -733,6 +763,7 @@
       const onPointerDown = (e) => {
         if (e.button !== undefined && e.button !== 0) return;
         if (e.target.closest("#image-preview-layer.is-open")) return;
+        if (e.target.closest(".photo-frame:not(.placeholder)")) return;
         active = true;
         treePanDidDrag = false;
         wrap.classList.add("is-dragging");
@@ -786,25 +817,68 @@
     }
 
     function attachPhotoHover(frame, fullSrc, alt) {
-      frame.addEventListener("click", (e) => {
+      let longPressTimer = null;
+      let longPressShowing = false;
+      let pressX = 0;
+      let pressY = 0;
+      const LONG_PRESS_MS = 480;
+      const LONG_PRESS_MOVE_CANCEL = 14;
+
+      const clearLongPress = () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      };
+
+      frame.addEventListener("contextmenu", (e) => {
+        if (usesTouchPreview()) e.preventDefault();
+      });
+
+      frame.addEventListener("pointerdown", (e) => {
         if (!usesTouchPreview()) return;
-        if (treePanDidDrag) return;
+        if (e.pointerType === "mouse") return;
         e.stopPropagation();
-        if (
-          activePreviewFrame === frame &&
-          hoverPreview.classList.contains("is-visible")
-        ) {
-          hideHoverPreview();
+        pressX = e.clientX;
+        pressY = e.clientY;
+        longPressShowing = false;
+        clearLongPress();
+        longPressTimer = window.setTimeout(() => {
+          longPressShowing = true;
+          activePreviewFrame = frame;
+          showTouchHoldPreview(fullSrc, alt, pressX, pressY);
+          if (navigator.vibrate) navigator.vibrate(12);
+        }, LONG_PRESS_MS);
+      });
+
+      frame.addEventListener("pointermove", (e) => {
+        if (!usesTouchPreview() || e.pointerType === "mouse") return;
+        if (longPressShowing) {
+          positionHoverPreview(e.clientX, e.clientY);
+          e.stopPropagation();
           return;
         }
-        activePreviewFrame = frame;
-        const rect = frame.getBoundingClientRect();
-        showHoverPreview(
-          fullSrc,
-          alt,
-          rect.left + rect.width / 2,
-          rect.top
-        );
+        const moved = Math.hypot(e.clientX - pressX, e.clientY - pressY);
+        if (moved > LONG_PRESS_MOVE_CANCEL) clearLongPress();
+      });
+
+      const endLongPress = (e) => {
+        if (!usesTouchPreview() || e.pointerType === "mouse") return;
+        clearLongPress();
+        if (longPressShowing) {
+          hideHoverPreview();
+          longPressShowing = false;
+        }
+      };
+
+      frame.addEventListener("pointerup", endLongPress);
+      frame.addEventListener("pointercancel", endLongPress);
+      frame.addEventListener("lostpointercapture", endLongPress);
+
+      frame.addEventListener("click", (e) => {
+        if (!usesTouchPreview()) return;
+        e.preventDefault();
+        e.stopPropagation();
       });
 
       frame.addEventListener("mouseenter", (e) => {
