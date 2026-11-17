@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#fffef9" />
+  <meta name="theme-color" content="#e8dcc4" />
   <title>Dwivedi–Dave Family Tree</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,6 +32,7 @@
       --couple-gap: 8px;
       --node-max: 220px;
       --tree-li-pad-x: 10px;
+      --parchment-bg: url("reference/ornate-watercolor-family-tree-parchment.png");
     }
 
     * {
@@ -42,9 +43,12 @@
       margin: 0;
       min-height: 100vh;
       font-family: var(--font-serif);
-      background:
-        radial-gradient(ellipse 95% 55% at 50% -5%, rgba(212, 175, 55, 0.14), transparent 58%),
-        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 42%, #ffffff 100%);
+      background-color: #e8dcc4;
+      background-image: var(--parchment-bg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
       color: var(--ink);
     }
 
@@ -60,23 +64,22 @@
       font-size: clamp(2.35rem, 6vw, 3.4rem);
       line-height: 1.1;
       letter-spacing: 0.02em;
-      color: var(--gold-dark);
+      color: var(--ink);
+      -webkit-text-fill-color: var(--ink);
+      paint-order: stroke fill;
+      -webkit-text-stroke: clamp(1px, 0.14em, 2px) var(--gold);
+      text-shadow:
+        0 0 clamp(4px, 0.35em, 10px) rgba(201, 162, 39, 0.35),
+        0 0 1px var(--gold-dark);
     }
 
     header p {
       margin: 0;
       font-family: var(--font-serif);
       font-style: italic;
-      color: var(--muted);
+      font-weight: 700;
+      color: var(--ink);
       font-size: 1.05rem;
-    }
-
-    .scroll-hint {
-      display: none;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--muted);
-      padding: 0 1rem 0.35rem;
     }
 
     .tree-wrap {
@@ -461,10 +464,6 @@
         height: 18px;
       }
 
-      .scroll-hint {
-        display: block;
-      }
-
       .legend {
         font-size: 0.72rem;
         padding: 0 0.65rem;
@@ -562,10 +561,6 @@
       font-size: 0.78rem;
     }
 
-    body.poster-export .scroll-hint {
-      display: none !important;
-    }
-
     body.poster-export #poster-capture {
       width: 4961px;
       height: 3508px;
@@ -576,9 +571,11 @@
       align-items: center;
       justify-content: center;
       padding: 32px 24px 36px;
-      background:
-        radial-gradient(ellipse 95% 55% at 50% -5%, rgba(212, 175, 55, 0.14), transparent 58%),
-        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 42%, #ffffff 100%);
+      background-color: #e8dcc4;
+      background-image: var(--parchment-bg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
     }
 
     body.poster-export #poster-content {
@@ -674,8 +671,7 @@
 
       #image-preview-layer,
       #image-hover-preview,
-      .preview-backdrop,
-      .scroll-hint {
+      .preview-backdrop {
         display: none !important;
         visibility: hidden !important;
       }
@@ -687,6 +683,11 @@
         height: auto !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
+        background-color: #e8dcc4 !important;
+        background-image: var(--parchment-bg) !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center center !important;
       }
 
       body.preview-open {
@@ -729,8 +730,9 @@
       }
 
       header h1 {
-        color: #9a7b1a !important;
-        -webkit-text-fill-color: #9a7b1a !important;
+        color: #121212 !important;
+        -webkit-text-fill-color: #121212 !important;
+        -webkit-text-stroke: 1.5px #c9a227 !important;
         background: none !important;
         filter: none !important;
       }
@@ -753,7 +755,6 @@
         <h1 id="page-title">Dwivedi–Dave Family Tree</h1>
         <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
       </header>
-      <p class="scroll-hint">Drag to pan · pinch to zoom · double-tap tree to reset zoom · hold a photo to preview.</p>
       <div class="tree-wrap" id="tree-scroll">
         <div class="tree-zoom" id="tree-zoom">
           <div class="tree" id="tree-root"></div>
