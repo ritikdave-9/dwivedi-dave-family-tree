@@ -3,27 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a1628" />
+  <meta name="theme-color" content="#fffef9" />
   <title>Dwivedi–Dave Family Tree</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Cormorant+Garamond:ital@0;1&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root {
-      --bg-deep: #06101f;
-      --bg-mid: #0f2544;
-      --glass: rgba(22, 58, 105, 0.42);
-      --glass-strong: rgba(30, 72, 130, 0.55);
-      --glass-border: rgba(140, 190, 255, 0.28);
-      --gold: #d4af37;
-      --gold-light: #f0d77a;
-      --gold-dark: #a67c00;
-      --ink: #eef4ff;
-      --ink-on-glass: #f8fbff;
-      --muted: #9eb8dc;
-      --line: rgba(212, 175, 55, 0.75);
+      --bg-deep: #fffef9;
+      --bg-mid: #faf6eb;
+      --bg-warm: #f5ecd8;
+      --gold: #c9a227;
+      --gold-light: #e8c85a;
+      --gold-dark: #9a7b1a;
+      --ink: #121212;
+      --ink-on-glass: #121212;
+      --muted: #6b5c3a;
+      --line: rgba(201, 162, 39, 0.72);
       --accent: var(--gold);
-      --shadow: 0 10px 36px rgba(0, 12, 40, 0.45);
-      --glow-gold: 0 0 22px rgba(212, 175, 55, 0.22);
+      --shadow-photo: 0 6px 22px rgba(154, 123, 26, 0.18);
+      --font-cursive: "Allura", "Great Vibes", "Segoe Script", cursive;
+      --font-display: "Great Vibes", "Allura", cursive;
+      --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
       --photo-size: clamp(64px, 16vw, 84px);
-      --couple-gap: 6px;
+      --couple-gap: 8px;
       --node-max: 220px;
       --tree-li-pad-x: 10px;
     }
@@ -35,10 +41,10 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: var(--font-serif);
       background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(80, 140, 220, 0.35), transparent 55%),
-        linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #163a62 100%);
+        radial-gradient(ellipse 95% 55% at 50% -5%, rgba(212, 175, 55, 0.14), transparent 58%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 42%, #ffffff 100%);
       color: var(--ink);
     }
 
@@ -48,21 +54,21 @@
     }
 
     header h1 {
-      margin: 0 0 0.35rem;
-      font-weight: 600;
-      font-size: clamp(1.35rem, 3vw, 1.85rem);
-      letter-spacing: 0.03em;
-      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      filter: drop-shadow(0 1px 8px rgba(212, 175, 55, 0.35));
+      margin: 0 0 0.2rem;
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(2.35rem, 6vw, 3.4rem);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      color: var(--gold-dark);
     }
 
     header p {
       margin: 0;
+      font-family: var(--font-serif);
+      font-style: italic;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 1.05rem;
     }
 
     .scroll-hint {
@@ -186,24 +192,24 @@
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       color: var(--ink-on-glass);
-      background: var(--glass);
-      backdrop-filter: blur(14px) saturate(1.25);
-      -webkit-backdrop-filter: blur(14px) saturate(1.25);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 12px 14px 10px;
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
       max-width: var(--node-max);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
     @media (hover: hover) and (pointer: fine) {
-      .node:hover {
-        transform: translateY(-2px);
-        border-color: rgba(212, 175, 55, 0.55);
-        box-shadow: var(--shadow), var(--glow-gold), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      .photo-frame:not(.placeholder) {
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .photo-frame:not(.placeholder):hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 28px rgba(154, 123, 26, 0.28);
       }
     }
 
@@ -221,9 +227,9 @@
       height: var(--photo-size);
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid var(--gold);
-      background: rgba(10, 30, 60, 0.65);
-      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
+      border: none;
+      background: transparent;
+      box-shadow: var(--shadow-photo);
       flex-shrink: 0;
       position: relative;
     }
@@ -231,9 +237,10 @@
     .photo-frame.group {
       width: auto;
       height: auto;
-      border-radius: 8px;
-      overflow: hidden;
+      border-radius: 0;
+      overflow: visible;
       line-height: 0;
+      box-shadow: none;
     }
 
     .photo-frame .photo {
@@ -261,21 +268,28 @@
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
-      color: var(--muted);
+      color: var(--gold);
+      background: var(--bg-warm);
+      box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.35);
     }
 
     .label {
-      font-size: 0.8rem;
-      line-height: 1.35;
-      font-weight: 600;
+      font-family: var(--font-cursive);
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      line-height: 1.2;
+      font-weight: 400;
+      color: var(--ink);
+      max-width: calc(var(--node-max) + 24px);
     }
 
     .label .sub {
       display: block;
-      font-weight: 500;
-      color: var(--muted);
-      font-size: 0.72rem;
-      margin-top: 2px;
+      font-family: inherit;
+      font-weight: 400;
+      color: var(--ink);
+      font-size: 0.92em;
+      margin-top: 1px;
+      opacity: 0.92;
     }
 
     .photo-frame:not(.placeholder) {
@@ -286,13 +300,11 @@
       position: fixed;
       z-index: 2000;
       pointer-events: none;
-      padding: 10px;
-      background: var(--glass-strong);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(212, 175, 55, 0.45);
-      border-radius: 14px;
-      box-shadow: 0 20px 50px rgba(0, 8, 30, 0.55), var(--glow-gold);
+      padding: 12px;
+      background: #fffef9;
+      border: 1px solid rgba(201, 162, 39, 0.45);
+      border-radius: 8px;
+      box-shadow: 0 16px 40px rgba(26, 26, 26, 0.12);
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.12s ease, visibility 0.12s ease;
@@ -317,10 +329,11 @@
 
     #image-hover-preview .preview-caption {
       margin-top: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      font-family: var(--font-cursive);
+      font-size: 1.25rem;
+      font-weight: 400;
       text-align: center;
-      color: var(--gold-light);
+      color: var(--ink);
     }
 
     #image-preview-layer {
@@ -390,13 +403,8 @@
         padding: 1rem 0.65rem 0.65rem;
       }
 
-      .node {
-        padding: 8px 8px 6px;
-        border-radius: 10px;
-      }
-
       .label .sub {
-        font-size: 0.68rem;
+        font-size: 0.88em;
       }
     }
 
@@ -416,7 +424,7 @@
         display: block;
         position: absolute;
         inset: 0;
-        background: rgba(4, 12, 28, 0.72);
+        background: rgba(255, 254, 249, 0.88);
       }
 
       #image-preview-layer.is-open #image-hover-preview {
@@ -492,8 +500,8 @@
       justify-content: center;
       padding: 32px 24px 36px;
       background:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(80, 140, 220, 0.35), transparent 55%),
-        linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #163a62 100%);
+        radial-gradient(ellipse 95% 55% at 50% -5%, rgba(212, 175, 55, 0.14), transparent 58%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 42%, #ffffff 100%);
     }
 
     body.poster-export #poster-content {
@@ -542,23 +550,25 @@
     }
 
     body.poster-export .node {
-      padding: 5px 7px 4px;
-      border-radius: 9px;
+      padding: 0;
       gap: 3px;
     }
 
     body.poster-export .label {
-      font-size: 0.58rem;
-      line-height: 1.25;
+      font-family: var(--font-cursive);
+      font-size: clamp(0.95rem, 1.1vw, 1.15rem);
+      line-height: 1.15;
+      color: var(--ink);
     }
 
     body.poster-export .label .sub {
-      font-size: 0.52rem;
+      font-size: 0.92em;
       margin-top: 1px;
+      color: var(--ink);
     }
 
     body.poster-export .photo-frame {
-      border-width: 2px;
+      box-shadow: var(--shadow-photo);
     }
 
     body.poster-export .photo-frame.placeholder {
@@ -637,16 +647,18 @@
       .node {
         break-inside: avoid;
         page-break-inside: avoid;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        box-shadow: none !important;
       }
 
       header h1 {
-        color: #d4af37 !important;
-        -webkit-text-fill-color: #d4af37 !important;
+        color: #9a7b1a !important;
+        -webkit-text-fill-color: #9a7b1a !important;
         background: none !important;
         filter: none !important;
+      }
+
+      .label,
+      .label .sub {
+        color: #121212 !important;
       }
 
       .photo-frame:not(.placeholder) {
