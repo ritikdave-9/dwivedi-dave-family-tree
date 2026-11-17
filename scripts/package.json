@@ -1,0 +1,8 @@
+{
+  "name": "family-tree-site-scripts",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "^24.2.0"
+  }
+}

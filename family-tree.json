@@ -5,7 +5,9 @@
     "honorificMaxDepth": 3,
     "imageNaming": "Solo: given-name (kebab-case). Pair: pair-name-and-name. Group: group-....",
     "treeArtPrompt": "TREE-IMAGE-GENERATION-PROMPT.md",
-    "referenceArt": "reference/tree-of-life-reference.jpeg"
+    "referenceArt": "reference/tree-of-life-reference.jpeg",
+    "generatedPoster": "family-tree-poster.png",
+    "posterSizePx": "4961x3508"
   },
   "images": {
     "directory": "images",

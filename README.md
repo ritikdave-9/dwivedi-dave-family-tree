@@ -25,3 +25,13 @@ Open http://localhost:8766/
 ## Edit the tree
 
 Update the `tree` object in `family-tree.json`. Add or change photos under `images/` and list them in `images.files` and `images.explicit` when needed.
+
+## Single-page poster image
+
+High-density print poster (A3 landscape, ~300 DPI):
+
+```bash
+cd scripts && npm install && node export-poster-image.mjs
+```
+
+Output: `family-tree-poster.png` (4961×3508 px). Preview: open `index.html?poster=1` in a browser.

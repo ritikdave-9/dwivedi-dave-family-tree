@@ -460,17 +460,135 @@
       }
     }
 
+    body.poster-export {
+      min-height: auto;
+      overflow: hidden;
+    }
+
+    body.poster-export header {
+      padding: 0.65rem 0.5rem 0.35rem;
+    }
+
+    body.poster-export header h1 {
+      font-size: 1.35rem;
+    }
+
+    body.poster-export header p {
+      font-size: 0.78rem;
+    }
+
+    body.poster-export .scroll-hint {
+      display: none !important;
+    }
+
+    body.poster-export #poster-capture {
+      width: 4961px;
+      height: 3508px;
+      margin: 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px 36px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(80, 140, 220, 0.35), transparent 55%),
+        linear-gradient(165deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #163a62 100%);
+    }
+
+    body.poster-export #poster-content {
+      transform-origin: top center;
+      width: max-content;
+      max-width: none;
+      flex: 0 0 auto;
+    }
+
+    body.poster-export .tree-wrap {
+      overflow: visible;
+      max-height: none;
+      width: max-content;
+      max-width: none;
+      padding: 0.25rem 0 0;
+      cursor: default;
+      touch-action: auto;
+    }
+
+    body.poster-export .tree-zoom {
+      transform: none !important;
+      min-width: 0;
+      width: max-content;
+    }
+
+    body.poster-export .tree {
+      width: max-content;
+      min-width: 0;
+    }
+
+    body.poster-export .tree ul {
+      padding-top: calc(var(--photo-size) * 0.22);
+    }
+
+    body.poster-export .tree li {
+      padding-top: calc(var(--photo-size) * 0.22);
+    }
+
+    body.poster-export .tree li::before,
+    body.poster-export .tree li::after {
+      height: calc(var(--photo-size) * 0.22);
+    }
+
+    body.poster-export .tree ul ul::before {
+      height: calc(var(--photo-size) * 0.22);
+    }
+
+    body.poster-export .node {
+      padding: 5px 7px 4px;
+      border-radius: 9px;
+      gap: 3px;
+    }
+
+    body.poster-export .label {
+      font-size: 0.58rem;
+      line-height: 1.25;
+    }
+
+    body.poster-export .label .sub {
+      font-size: 0.52rem;
+      margin-top: 1px;
+    }
+
+    body.poster-export .photo-frame {
+      border-width: 2px;
+    }
+
+    body.poster-export .photo-frame.placeholder {
+      font-size: 1.1rem;
+    }
+
+    body.poster-export .photo-frame.group .photo {
+      max-width: calc(var(--photo-size) * 2.15);
+      max-height: calc(var(--photo-size) * 1.45);
+    }
+
+    body.poster-export #image-preview-layer {
+      display: none !important;
+    }
+
   </style>
 </head>
 <body>
-  <header>
-    <h1 id="page-title">Dwivedi–Dave Family Tree</h1>
-    <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
-  </header>
-  <p class="scroll-hint">Drag to pan · pinch to zoom · double-tap tree to reset zoom · hold a photo to preview.</p>
-  <div class="tree-wrap" id="tree-scroll">
-    <div class="tree-zoom" id="tree-zoom">
-      <div class="tree" id="tree-root"></div>
+  <div id="poster-capture">
+    <div id="poster-content">
+      <header>
+        <h1 id="page-title">Dwivedi–Dave Family Tree</h1>
+        <p id="page-subtitle">From Maha Pandit Raghunath Ji</p>
+      </header>
+      <p class="scroll-hint">Drag to pan · pinch to zoom · double-tap tree to reset zoom · hold a photo to preview.</p>
+      <div class="tree-wrap" id="tree-scroll">
+        <div class="tree-zoom" id="tree-zoom">
+          <div class="tree" id="tree-root"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -483,6 +601,9 @@
   </div>
 
   <script>
+    const POSTER_MODE =
+      new URLSearchParams(location.search).get("poster") === "1";
+
     let treePanDidDrag = false;
     let treeScale = 1;
     const TREE_SCALE_MIN = 0.45;
@@ -1067,11 +1188,13 @@
           img.className = "photo";
           img.src = imageUrl(ph.src);
           img.alt = ph.alt;
-          img.loading = "lazy";
-          img.decoding = "async";
+          img.loading = POSTER_MODE ? "eager" : "lazy";
+          img.decoding = POSTER_MODE ? "sync" : "async";
           img.addEventListener("load", () => tunePortraitCrop(img, ph.group));
           frame.appendChild(img);
-          attachPhotoHover(frame, imageUrl(ph.src), ph.alt);
+          if (!POSTER_MODE) {
+            attachPhotoHover(frame, imageUrl(ph.src), ph.alt);
+          }
           photosDiv.appendChild(frame);
         }
       }
@@ -1105,7 +1228,94 @@
       root.appendChild(ul);
     }
 
+    async function waitForTreeImages() {
+      const imgs = [...document.querySelectorAll(".tree img")];
+      await Promise.all(
+        imgs.map((img) =>
+          img.complete
+            ? Promise.resolve()
+            : new Promise((r) => {
+                img.onload = img.onerror = r;
+              })
+        )
+      );
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    }
+
+    async function applyPosterMetrics(photoSize) {
+      const content = document.getElementById("poster-content");
+      const px = Math.round(photoSize);
+      const vars = document.body.style;
+      vars.setProperty("--photo-size", `${px}px`);
+      vars.setProperty("--node-max", `${Math.round(px * 2.35)}px`);
+      vars.setProperty("--couple-gap", `${Math.max(3, Math.round(px / 13))}px`);
+      vars.setProperty("--tree-li-pad-x", `${Math.max(1, Math.round(px / 16))}px`);
+      if (content) content.style.transform = "none";
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    }
+
+    async function measurePosterContent() {
+      const content = document.getElementById("poster-content");
+      return {
+        w: content?.scrollWidth || 1,
+        h: content?.scrollHeight || 1,
+      };
+    }
+
+    async function layoutPosterForExport() {
+      await waitForTreeImages();
+      const content = document.getElementById("poster-content");
+      const tree = document.querySelector(".tree");
+      if (!content || !tree) return;
+
+      const frameW = 4961;
+      const frameH = 3508;
+      const marginX = 40;
+      const marginY = 32;
+      const targetFill = 0.97;
+
+      let lo = 48;
+      let hi = 280;
+      let bestPhoto = lo;
+      let bestScale = 1;
+
+      while (lo <= hi) {
+        const mid = Math.floor((lo + hi) / 2);
+        await applyPosterMetrics(mid);
+        const { w, h } = await measurePosterContent();
+        const fillScale = Math.min(
+          ((frameW - marginX * 2) * targetFill) / w,
+          ((frameH - marginY * 2) * targetFill) / h
+        );
+
+        if (fillScale >= 1) {
+          bestPhoto = mid;
+          bestScale = fillScale;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+
+      await applyPosterMetrics(bestPhoto);
+      const { w, h } = await measurePosterContent();
+      bestScale = Math.min(
+        ((frameW - marginX * 2) * targetFill) / w,
+        ((frameH - marginY * 2) * targetFill) / h
+      );
+
+      content.style.transform = `scale(${bestScale})`;
+      document.body.dataset.posterPhotoSize = String(bestPhoto);
+      document.documentElement.dataset.posterPhotoSize = String(bestPhoto);
+      document.documentElement.dataset.posterScale = String(bestScale);
+      document.documentElement.dataset.posterReady = "1";
+    }
+
     async function init() {
+      if (POSTER_MODE) {
+        document.body.classList.add("poster-export");
+      }
+
       const res = await fetch("family-tree.json");
       if (!res.ok) {
         throw new Error("Could not load family-tree.json");
@@ -1120,6 +1330,12 @@
       EXPLICIT_IMAGE = data.images.explicit;
       family = data.tree;
       render();
+
+      if (POSTER_MODE) {
+        await layoutPosterForExport();
+        return;
+      }
+
       setupTreeGestures();
       applyTreeScale();
       const wrap = document.getElementById("tree-scroll");
