@@ -575,6 +575,85 @@
     }
 
   </style>
+  <style>
+    /* Browser print / Save as PDF — avoid fixed overlays and scroll clipping */
+    @media print {
+      @page {
+        size: landscape;
+        margin: 8mm;
+      }
+
+      #image-preview-layer,
+      #image-hover-preview,
+      .preview-backdrop,
+      .scroll-hint {
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      html,
+      body {
+        overflow: visible !important;
+        min-height: auto !important;
+        height: auto !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body.preview-open {
+        overflow: visible !important;
+      }
+
+      #poster-capture,
+      #poster-content {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        max-width: none !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        background: transparent !important;
+      }
+
+      .tree-wrap {
+        overflow: visible !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        cursor: default !important;
+      }
+
+      .tree-zoom {
+        transform: none !important;
+        min-width: 0 !important;
+        width: max-content !important;
+      }
+
+      .tree,
+      .tree ul {
+        overflow: visible !important;
+      }
+
+      .node {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+      }
+
+      header h1 {
+        color: #d4af37 !important;
+        -webkit-text-fill-color: #d4af37 !important;
+        background: none !important;
+        filter: none !important;
+      }
+
+      .photo-frame:not(.placeholder) {
+        cursor: default !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="poster-capture">
@@ -1310,6 +1389,19 @@
       document.documentElement.dataset.posterScale = String(bestScale);
       document.documentElement.dataset.posterReady = "1";
     }
+
+    function prepareForPrint() {
+      hideHoverPreview();
+      document.body.classList.remove("preview-open");
+      const zoom = document.getElementById("tree-zoom");
+      if (zoom && !POSTER_MODE) {
+        treeScale = 1;
+        zoom.style.transform = "";
+        zoom.style.transformOrigin = "";
+      }
+    }
+
+    window.addEventListener("beforeprint", prepareForPrint);
 
     async function init() {
       if (POSTER_MODE) {
