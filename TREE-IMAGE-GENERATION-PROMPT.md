@@ -32,7 +32,7 @@ Use this with **IMAGE-GENERATION-PROMPT-BLOCK** below. Attach **`reference/tree-
 | 4 | Abhishek & Rachna → Aryan | `pair-abhishek-and-rachna.jpeg`, `aryan.jpeg` |
 | 4 (Indra branch) | Surabhi & Hridesh Vyas → Javesh | `surabhi.jpeg`, `hridesh-vyas.jpeg`, `javesh.jpeg` |
 | 4 | Parul & Narendra Sharma → Bhav Sharma, Avishi | `parul.jpeg`, `narendra-sharma.jpeg`, `bhav-sharma.jpeg`, `avishi.jpeg` |
-| 4 | Neha & Vinod Sharma → Trisha | `neha.jpeg`, *(Vinod — no photo)*, `trisha.jpeg` |
+| 4 | Neha & Vinod Sharma → Trisha | `neha.jpeg`, `vinod-sharma.jpeg`, `trisha.jpeg` |
 
 Data source: **`family-tree.json`** → `tree` + `images.registry`.
 

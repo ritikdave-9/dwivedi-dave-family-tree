@@ -40,6 +40,7 @@
       "bhav-sharma.jpeg",
       "avishi.jpeg",
       "neha.jpeg",
+      "vinod-sharma.jpeg",
       "trisha.jpeg"
     ],
     "registry": {
@@ -85,6 +86,7 @@
       "bhav-sharma.jpeg": { "type": "solo", "people": ["Bhav Sharma"] },
       "avishi.jpeg": { "type": "solo", "people": ["Avishi"] },
       "neha.jpeg": { "type": "solo", "people": ["Neha"] },
+      "vinod-sharma.jpeg": { "type": "solo", "people": ["Vinod Sharma"] },
       "trisha.jpeg": { "type": "solo", "people": ["Trisha"] }
     },
     "explicit": {
@@ -114,6 +116,7 @@
       "bhav sharma": "bhav-sharma.jpeg",
       "avishi": "avishi.jpeg",
       "neha": "neha.jpeg",
+      "vinod sharma": "vinod-sharma.jpeg",
       "trisha": "trisha.jpeg"
     }
   },
