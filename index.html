@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Cormorant+Garamond:ital@0;1&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&display=swap"
     rel="stylesheet"
   />
   <style>
@@ -58,18 +58,18 @@
     }
 
     header h1 {
-      margin: 0 0 0.2rem;
+      margin: 0 0 0.35rem;
       font-family: var(--font-display);
-      font-weight: 400;
-      font-size: clamp(2.35rem, 6vw, 3.4rem);
-      line-height: 1.1;
+      font-weight: 700;
+      font-size: clamp(3rem, 9vw, 5rem);
+      line-height: 1.05;
       letter-spacing: 0.02em;
       color: var(--ink);
       -webkit-text-fill-color: var(--ink);
       paint-order: stroke fill;
-      -webkit-text-stroke: clamp(1px, 0.14em, 2px) var(--gold);
+      -webkit-text-stroke: clamp(1.5px, 0.12em, 3px) var(--gold);
       text-shadow:
-        0 0 clamp(4px, 0.35em, 10px) rgba(201, 162, 39, 0.35),
+        0 0 clamp(6px, 0.4em, 14px) rgba(201, 162, 39, 0.4),
         0 0 1px var(--gold-dark);
     }
 
@@ -79,7 +79,8 @@
       font-style: italic;
       font-weight: 700;
       color: var(--ink);
-      font-size: 1.05rem;
+      font-size: clamp(1.35rem, 3.8vw, 1.95rem);
+      letter-spacing: 0.02em;
     }
 
     .tree-wrap {
@@ -554,11 +555,13 @@
     }
 
     body.poster-export header h1 {
-      font-size: 1.35rem;
+      font-size: clamp(2.75rem, 4vw, 3.5rem);
+      font-weight: 700;
     }
 
     body.poster-export header p {
-      font-size: 0.78rem;
+      font-size: clamp(1.35rem, 1.6vw, 1.75rem);
+      font-weight: 700;
     }
 
     body.poster-export #poster-capture {
